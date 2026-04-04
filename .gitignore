@@ -1,0 +1,19 @@
+node_modules/
+dist/
+release/
+*.log
+.env
+.DS_Store
+Thumbs.db
+
+# Build artifacts
+.eb-cache/
+*.zip
+*.7z
+ResidentPrivacyFlow_final/
+
+# Temporary files
+tsc-errors.txt
+tsc-out.log
+build-errors.log
+vite-build.log

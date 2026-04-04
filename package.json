@@ -1,0 +1,100 @@
+{
+  "name": "resident-privacy-flow",
+  "version": "1.0.0",
+  "description": "Lokale Windows-Desktop-Anwendung zur PDF-Schwärzung und Pseudonymisierung",
+  "main": "dist/main/main/main.js",
+  "author": "ResidentPrivacyFlow",
+  "license": "MIT",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:renderer\" \"npm run dev:main\"",
+    "dev:renderer": "vite",
+    "dev:main": "wait-on http://localhost:5173 && tsc -p tsconfig.main.json && electron .",
+    "build:renderer": "vite build",
+    "build:main": "tsc -p tsconfig.main.json",
+    "build": "npm run build:renderer && npm run build:main",
+    "dist": "npm run build && electron-builder --win --x64",
+    "dist:exe": "npm run build && electron-builder --win nsis --x64",
+    "dist:msi": "npm run build && electron-builder --win msi --x64",
+    "postinstall": "electron-builder install-app-deps"
+  },
+  "build": {
+    "appId": "com.residentprivacyflow.app",
+    "productName": "ResidentPrivacyFlow",
+    "artifactName": "ResidentPrivacyFlow-${version}-${arch}.${ext}",
+    "directories": {
+      "output": "release",
+      "buildResources": "assets"
+    },
+    "files": [
+      "dist/**/*",
+      "assets/**/*",
+      "node_modules/**/*",
+      "!node_modules/**/*.dylib",
+      "!node_modules/**/*.so",
+      "!node_modules/**/*.so.*",
+      "!node_modules/**/darwin-*",
+      "!node_modules/**/linux-*",
+      "!node_modules/**/*darwin*",
+      "!node_modules/**/*linux*"
+    ],
+    "extraResources": [
+      {
+        "from": "assets/",
+        "to": "assets/",
+        "filter": [
+          "**/*"
+        ]
+      }
+    ],
+    "asar": false,
+    "win": {
+      "target": [
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "zip",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "assets/icon.ico",
+      "publisherName": "ResidentPrivacyFlow"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": true,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "ResidentPrivacyFlow",
+      "installerLanguages": [
+        "de"
+      ],
+      "language": "1031"
+    }
+  },
+  "dependencies": {
+    "jspdf": "^2.5.1",
+    "pdfjs-dist": "^3.11.174",
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.45",
+    "@types/react-dom": "^18.2.18",
+    "@types/uuid": "^9.0.7",
+    "@vitejs/plugin-react": "^4.2.1",
+    "concurrently": "^8.2.2",
+    "electron": "^28.1.0",
+    "electron-builder": "^24.9.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "typescript": "^5.3.3",
+    "vite": "^5.0.10",
+    "wait-on": "^7.2.0"
+  }
+}
