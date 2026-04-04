@@ -74,6 +74,12 @@ npm run dist:msi
 ```
 Die fertigen Programme befinden sich im Ordner `release/`.
 
+### 🔏 Code Signing (Produktion)
+Damit keine SmartScreen-Warnung ("Der Computer wurde durch Windows geschützt") erscheint, muss die App signiert werden:
+1. **Zertifikat:** Ein Code Signing Zertifikat (empfohlen: EV) von einer CA erwerben.
+2. **Umgebung:** `.env`-Datei erstellen (siehe `.env.example`) und Pfad/Passwort hinterlegen.
+3. **Build:** `npm run dist` ausführen. Die Signierung erfolgt automatisch.
+
 ---
 
 ## 📦 Aktuelle Version & Releases
