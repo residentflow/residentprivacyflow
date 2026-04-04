@@ -1,11 +1,11 @@
 # ResidentPrivacyFlow
 
-**Lokale Windows-Desktop-Anwendung zur PDF-Schwärzung und Pseudonymisierung**
+**ResidentPrivacyFlow ist eine effiziente und benutzerfreundliche Desktop-Anwendung, die speziell für die Analyse, Schwärzung und Pseudonymisierung von PDF-Dokumenten entwickelt wurde.**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 ## Über das Projekt
-ResidentPrivacyFlow ist eine effiziente und benutzerfreundliche Desktop-Anwendung, die speziell für die Analyse, Schwärzung und Pseudonymisierung von PDF-Dokumenten entwickelt wurde. Die Anwendung arbeitet **ausschließlich lokal und offline**, um höchste Datenschutzstandards (DSGVO-konform) zu gewährleisten. Keine sensiblen Daten verlassen jemals Ihren Rechner.
+Lokale Windows-Desktop-Anwendung zur PDF-Schwärzung und Pseudonymisierung. Die Anwendung arbeitet **ausschließlich lokal und offline**, um höchste Datenschutzstandards (DSGVO-konform) zu gewährleisten. Keine sensiblen Daten verlassen jemals Ihren Rechner. Es ist sowohl eine Maskierung als auch Pseudonymisierung von pdf-Dateien möglich.
 
 ## Hauptfunktionen
 - **Sichere PDF-Anzeige**: Schnelles Rendering von PDF-Dokumenten mit interaktiven Seiten-Thumbnails.
@@ -37,12 +37,8 @@ npm run dev
 
 Die Anwendung wird mit `electron-builder` für Windows optimiert.
 
-- **Kompilieren**: `npm run build`
-- **Standard-Dist (Portable & ZIP)**: `npm run dist`
-- **Windows Setup (NSIS)**: `npm run dist:exe`
-- **Windows MSI Installer**: `npm run dist:msi`
-
 Die fertigen Artefakte finden Sie nach dem Build im Ordner `release/`.
+**ZIP Datei lokal entpacken und los geht es**
 
 ## Dokumentation
 
