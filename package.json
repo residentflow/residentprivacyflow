@@ -1,6 +1,6 @@
 {
   "name": "resident-privacy-flow",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Lokale Windows-Desktop-Anwendung zur PDF-Schwärzung und Pseudonymisierung",
   "main": "dist/main/main/main.js",
   "author": "ResidentPrivacyFlow",
