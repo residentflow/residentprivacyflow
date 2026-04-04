@@ -63,9 +63,7 @@
         }
       ],
       "icon": "assets/icon.ico",
-      "publisherName": "ResidentPrivacyFlow",
-      "certificateFile": "${env.CSC_LINK}",
-      "certificatePassword": "${env.CSC_KEY_PASSWORD}"
+      "publisherName": "ResidentPrivacyFlow"
     },
     "nsis": {
       "oneClick": false,
