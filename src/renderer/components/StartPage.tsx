@@ -45,7 +45,7 @@ export default function StartPage() {
           {/* Using the building-blocks logo from assets as requested */}
           <img 
             src={icon} 
-            alt="ResidentFlow Logo" 
+            alt="ResidentPrivacyFlow Logo" 
             style={{ width: '100%', maxWidth: '320px', height: 'auto', display: 'block', objectFit: 'contain' }} 
           />
         </div>
