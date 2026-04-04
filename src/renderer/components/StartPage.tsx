@@ -1,6 +1,7 @@
 import React, { useCallback, useState, useRef } from 'react';
 import { useAppState } from '../store/app-store';
 import { openPdfFile } from '../services/file-handler';
+import icon from '../../../assets/icon.png';
 
 export default function StartPage() {
   const { state, dispatch } = useAppState();
@@ -40,8 +41,13 @@ export default function StartPage() {
   return (
     <div className="start-page">
       <div className="start-content">
-        <div className="start-icon">
-          <img src="./logo.png" alt="ResidentPrivacyFlow Logo" style={{ width: '260px', height: 'auto' }} />
+        <div className="start-icon" style={{ padding: '20px 0' }}>
+          {/* Using the building-blocks logo from assets as requested */}
+          <img 
+            src={icon} 
+            alt="ResidentFlow Logo" 
+            style={{ width: '100%', maxWidth: '320px', height: 'auto', display: 'block', objectFit: 'contain' }} 
+          />
         </div>
         <h1 className="start-title">ResidentPrivacyFlow</h1>
         <p className="start-subtitle">

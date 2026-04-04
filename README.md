@@ -1,26 +1,56 @@
 # ResidentPrivacyFlow
 
-**ResidentPrivacyFlow ist eine effiziente und benutzerfreundliche Desktop-Anwendung, die speziell für die Analyse, Schwärzung und Pseudonymisierung von PDF-Dokumenten entwickelt wurde.**
+**Sichere, lokale PDF-Schwärzung und Pseudonymisierung für höchste Datenschutzansprüche.**
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+![ResidentPrivacyFlow Hero Mockup](assets/hero_mockup.png)
 
-## Über das Projekt
-Lokale Windows-Desktop-Anwendung zur PDF-Schwärzung und Pseudonymisierung. Die Anwendung arbeitet **ausschließlich lokal und offline**, um höchste Datenschutzstandards (DSGVO-konform) zu gewährleisten. Keine sensiblen Daten verlassen jemals Ihren Rechner. Es ist sowohl eine Maskierung als auch Pseudonymisierung von pdf-Dateien möglich.
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Electron](https://img.shields.io/badge/Electron-Latest-47848F?logo=electron&logoColor=white)](https://www.electronjs.org/)
+[![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=black)](https://reactjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Vite](https://img.shields.io/badge/Vite-Latest-646CFF?logo=vite&logoColor=white)](https://vitejs.dev/)
 
-## Hauptfunktionen
-- **Sichere PDF-Anzeige**: Schnelles Rendering von PDF-Dokumenten mit interaktiven Seiten-Thumbnails.
-- **Lokale Verarbeitung**: Vollständige Offline-Verarbeitung ohne Cloud-Dienste oder externe APIs.
-- **Manuelle Schwärzung**: Intuitive Markierung sensibler Datenbereiche direkt im PDF-Viewer.
-- **Pseudonymisierung**: Zuweisung von Markierungen zu logischen Gruppen (z. B. *Name_1*, *Adresse_1*, *IBAN*), um personenbeziehbare Daten konsistent zu schützen.
-- **Strukturierter CSV-Export**: Export der Daten als strukturierte CSV-Datei für die weitere Verarbeitung oder Dokumentation.
+---
 
-## Schnellstart
+## 🛡️ Über das Projekt
+
+ResidentPrivacyFlow ist eine spezialisierte Windows-Desktop-Anwendung zur Analyse, Schwärzung und Pseudonymisierung von PDF-Dokumenten. In einer Welt, in der Datenschutz an erster Stelle steht, bietet dieses Tool eine **zu 100% lokale Lösung**. Keine Daten werden jemals in die Cloud hochgeladen; alle Verarbeitungsschritte erfolgen ausschließlich auf Ihrem Endgerät (DSGVO-konform by Design).
+
+### Warum ResidentPrivacyFlow?
+- **Absoluter Datenschutz**: Keine Internetverbindung erforderlich. Ideal für hochsensible Dokumente.
+- **Benutzerzentrierte UI**: Intuitive Bedienung mit Fokus auf Effizienz und Übersichtlichkeit.
+- **Automatisierte Systematik**: Unterstützung beim Management von PII (Personally Identifiable Information) durch logische Gruppierung.
+
+---
+
+## ✨ Hauptfunktionen
+
+- **🚀 High-Performance PDF-Viewer**: Schnelles Laden und flüssiges Navigieren durch Dokumente jeder Größe.
+- **🔍 Interaktive Thumbnails**: Übersichtliche Seitenleiste für die schnelle Navigation.
+- **🖊️ Präzise manuelle Schwärzung**: Markieren Sie sensible Bereiche direkt im Dokument per Drag-and-Drop.
+- **🏷️ Intelligente Pseudonymisierung**: Weisen Sie Markierungen Variablen wie `Name_1`, `Adresse_1` oder `IBAN` zu.
+- **📊 Strukturierter Export**: Generieren Sie detaillierte CSV-Berichte über alle vorgenommenen Änderungen und Maskierungen.
+- **📦 Windows Optimiert**: Nahtlose Integration als native Desktop-Anwendung.
+
+---
+
+## 🛠️ Technologie-Stack
+
+- **Frontend**: React 18 & Vite für eine moderne, reaktive Benüteroberfläche.
+- **Shell**: Electron zur Bereitstellung als native Desktop-App.
+- **Styling**: Vanilla CSS mit Fokus auf Performance und modernem Design.
+- **PDF-Engine**: Robustes Rendering basierend auf Industriestandards.
+- **Sprache**: TypeScript für maximale Typsicherheit und Wartbarkeit.
+
+---
+
+## 🚀 Schnellstart
 
 ### Voraussetzungen
-- Node.js (Version 18 oder höher)
-- npm (Node Package Manager)
+- [Node.js](https://nodejs.org/) (Version 18 oder höher)
+- [npm](https://www.npmjs.com/)
 
-### Installation & Ausführung
+### Installation & Betrieb
 ```bash
 # Download:
 https://github.com/residentflow/residentprivacyflow/releases/download/v1.0.0/ResidentPrivacyFlow-1.0.0-x64.zip
@@ -32,28 +62,46 @@ ZIP-Datei in lokalen Ordner entpacken
 ResidentPrivacyFlow.exe starten
 ```
 
-## Build & Release (Deployment)
+### Build & Deployment
+Um eine ausführbare Windows-Datei zu erstellen:
+```bash
+# Standard Build (ZIP & Portable)
+npm run dist
 
-Die Anwendung wird mit `electron-builder` für Windows optimiert.
-
-Die fertigen Artefakte finden Sie nach dem Build im Ordner `release/`.
-**ZIP Datei lokal entpacken und los geht es**
-
-## Dokumentation
-
-- [**Entwickler-Handbuch (DEVELOPMENT.md)**](DEVELOPMENT.md): Technische Details zur Architektur, Debugging und den verwendeten Bibliotheken.
-- [**Mitwirken (CONTRIBUTING.md)**](CONTRIBUTING.md): Richtlinien für Beiträge, Issues und Pull Requests.
-- [**Asset-Anleitung (assets/README.md)**](assets/README.md): Informationen zu Icons, Logos und grafischen Ressourcen.
-
-## Projektstruktur
-
-- **`src/main/`**: Electron Main-Prozess (Dateimanagement, IPC).
-- **`src/renderer/`**: React 18 UI (Vite-basiert).
-- **`src/common/`**: Gemeinsame Typen und Utilities.
-- **`assets/`**: Statische Ressourcen (App-Icons).
-
-## Lizenz
-Dieses Projekt ist unter der [MIT-Lizenz](LICENSE) lizenziert.
+# Windows Installer (EXE/MSI)
+npm run dist:exe
+npm run dist:msi
+```
+Die fertigen Programme befinden sich im Ordner `release/`.
 
 ---
-© 2026 ResidentPrivacyFlow
+
+## 📦 Aktuelle Version & Releases
+
+Die offizielle Release-Historie und die ausführbaren Dateien finden Sie auf der [**GitHub Releases Seite**](https://github.com/residentflow/residentprivacyflow/releases).
+
+- **v1.0.0 (Aktuell)**: Initiale Veröffentlichung mit vollem Funktionsumfang für PDF-Anzeige, Schwärzung und CSV-Export.
+- **Formate**: 
+  - `EXE` (Setup): Einfache Installation für Windows.
+  - `MSI` (Enterprise Installer): Für die IT-Verteilung.
+  - `ZIP` (Portable Version): Herunterladen, **entpacken** und direkt starten (keine Installation erforderlich).
+
+Weitere Details zu den Änderungen finden Sie im [**CHANGELOG.md**](CHANGELOG.md).
+
+---
+
+## 📝 Dokumentation & Beteiligung
+
+- [**DEVELOPMENT.md**](DEVELOPMENT.md): Architektur-Diagramme, interne Abläufe und Tooling.
+- [**CONTRIBUTING.md**](CONTRIBUTING.md): Wie Sie zum Projekt beitragen können (Code-Guidelines, PRs).
+- [**SECURITY.md**](SECURITY.md): Unser Versprechen für Ihre Sicherheit.
+- [**LICENSE**](LICENSE): Rechtliche Informationen (MIT Lizenz).
+
+---
+
+## 🤝 Support
+
+Bei Fragen oder Problemen öffnen Sie bitte ein [Issue](https://github.com/residentflow/residentprivacyflow/issues) oder kontaktieren Sie uns direkt unter [stefan@residentflow.de](mailto:stefan@residentflow.de).
+
+---
+© 2026 ResidentPrivacyFlow - Lokale Sicherheit für Ihre Dokumente.

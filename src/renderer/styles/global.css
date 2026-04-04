@@ -916,10 +916,10 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   height: 100%;
   width: 100%;
-  padding: var(--space-3xl);
+  padding: calc(var(--space-3xl) * 2) var(--space-xl);
   overflow-y: auto;
   animation: fadeIn 0.5s ease-out;
 }
@@ -933,7 +933,6 @@ body {
 .start-icon {
   width: 100%;
   height: auto;
-  min-height: 200px;
   margin: 0 auto var(--space-lg);
   display: flex;
   align-items: center;
@@ -942,6 +941,7 @@ body {
   border-radius: 0;
   box-shadow: none;
   animation: none;
+  padding-top: var(--space-md);
 }
 
 .start-title {

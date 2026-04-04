@@ -24,15 +24,16 @@ export default function SidebarThumbnails() {
       
       const baseScale = 0.2;
       const dpr = window.devicePixelRatio || 1;
-      const viewport = page.getViewport({ scale: baseScale });
+      // MATCH PdfViewer logic: scale * dpr handles rotation and HiDPI correctly
+      const viewport = page.getViewport({ scale: baseScale * dpr });
 
       // Always ensure dimensions are set before rendering
-      canvas.width = Math.floor(viewport.width * dpr);
-      canvas.height = Math.floor(viewport.height * dpr);
+      canvas.width = viewport.width;
+      canvas.height = viewport.height;
       canvas.style.width = '100%';
       canvas.style.height = 'auto';
       
-      const ctx = canvas.getContext('2d');
+      const ctx = canvas.getContext('2d', { alpha: false });
       if (!ctx) {
         activeRenderRequests.current.delete(renderKey);
         return;
@@ -42,12 +43,9 @@ export default function SidebarThumbnails() {
       ctx.fillStyle = 'white';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      const transform = dpr !== 1 ? [dpr, 0, 0, dpr, 0, 0] : undefined;
-
       await page.render({ 
         canvasContext: ctx, 
-        viewport: viewport,
-        transform: transform as number[] | undefined 
+        viewport: viewport
       }).promise;
       
       renderedPages.current.add(renderKey);
@@ -63,6 +61,7 @@ export default function SidebarThumbnails() {
   useEffect(() => {
     renderedPages.current.clear();
     activeRenderRequests.current.clear();
+    canvasRefs.current.clear();
   }, [state.fileData]);
 
   // Effect to trigger rendering when the component mounts or file changes
