@@ -22,15 +22,14 @@ Lokale Windows-Desktop-Anwendung zur PDF-Schwärzung und Pseudonymisierung. Die 
 
 ### Installation & Ausführung
 ```bash
-# Repository klonen
-git clone <Ihre-Repository-URL>
-cd residentprivacyflow
+# Download:
+https://github.com/residentflow/residentprivacyflow/releases/download/v1.0.0/ResidentPrivacyFlow-1.0.0-x64.zip
 
-# Abhängigkeiten installieren
-npm install
+# Entpacken
+ZIP-Datei in lokalen Ordner entpacken
 
-# Anwendung im Entwicklungsmodus starten
-npm run dev
+# Anwendung starten
+ResidentPrivacyFlow.exe starten
 ```
 
 ## Build & Release (Deployment)
