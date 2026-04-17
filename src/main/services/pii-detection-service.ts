@@ -27,6 +27,34 @@ const REGEX_RULES: RegexRule[] = [
     pattern: /\b[A-Z]{2}\d{2}\s?\d{4}\s?\d{4}\s?\d{4}\s?\d{4}\s?\d{2,4}\b/gi,
     priority: 10,
   },
+  // Kreditkartennummern (Visa, Mastercard, Amex, Discover)
+  {
+    name: 'Kreditkarte',
+    category: 'Kreditkarte',
+    pattern: /\b(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|3[47][0-9]{13}|6(?:011|5[0-9]{2})[0-9]{12})\b/g,
+    priority: 10,
+  },
+  // Deutsche Sozialversicherungsnummer: 2 Ziffern + 6 Ziffern + Buchstabe + 3 Ziffern
+  {
+    name: 'Sozialversicherungsnummer',
+    category: 'Sozialversicherung',
+    pattern: /\b\d{2}\s?\d{6}\s?[A-Z]\s?\d{3}\b/g,
+    priority: 9,
+  },
+  // BIC/SWIFT: 4 Buchstaben (Bank) + 2 Buchstaben (Land) + 2 alphanumerisch + optionale 3
+  {
+    name: 'BIC',
+    category: 'BIC',
+    pattern: /(?:BIC|SWIFT)[:\s]*([A-Z]{4}[A-Z]{2}[A-Z0-9]{2}(?:[A-Z0-9]{3})?)\b/gi,
+    priority: 9,
+  },
+  // Fahrzeug-Kennzeichen (DE): 1-3 Buchstaben - 1-2 Buchstaben + 1-4 Ziffern + opt. E/H
+  {
+    name: 'Fahrzeug-Kennzeichen',
+    category: 'Fahrzeug',
+    pattern: /\b[A-ZÄÖÜ]{1,3}[-\s][A-Z]{1,2}\s?\d{1,4}[EH]?\b/g,
+    priority: 7,
+  },
   // E-Mail
   {
     name: 'E-Mail',
@@ -62,11 +90,18 @@ const REGEX_RULES: RegexRule[] = [
     pattern: /\b(?:0?[1-9]|[12]\d|3[01])\.(?:0?[1-9]|1[0-2])\.(?:19|20)\d{2}\b/g,
     priority: 6,
   },
-  // German Tax ID (Steuer-ID) format: 111/111/11111 or 11 111 111 111
+  // Persönliche Steueridentifikationsnummer (IdNr.): exakt 11 Ziffern, keine Trennzeichen
   {
     name: 'Steuer-ID',
     category: 'Steuer-ID',
-    pattern: /\b\d{2,3}\s?[\/\s]\s?\d{3}\s?[\/\s]\s?\d{4,5}\b/g,
+    pattern: /\b(?<![\/\d])\d{11}(?![\/\d])\b/g,
+    priority: 8,
+  },
+  // Unternehmens-Steuernummer: Schrägstrich-Format (Bayern: 111/222/33333)
+  {
+    name: 'Steuernummer',
+    category: 'Steuernummer',
+    pattern: /\b\d{2,3}\/\d{3}\/\d{4,5}\b/g,
     priority: 8,
   },
   // URLs

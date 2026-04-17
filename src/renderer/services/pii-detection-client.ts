@@ -21,6 +21,30 @@ const REGEX_RULES: RegexRule[] = [
     priority: 10,
   },
   {
+    name: 'Kreditkarte',
+    category: 'Kreditkarte',
+    pattern: /\b(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|3[47][0-9]{13}|6(?:011|5[0-9]{2})[0-9]{12})\b/g,
+    priority: 10,
+  },
+  {
+    name: 'Sozialversicherungsnummer',
+    category: 'Sozialversicherung',
+    pattern: /\b\d{2}\s?\d{6}\s?[A-Z]\s?\d{3}\b/g,
+    priority: 9,
+  },
+  {
+    name: 'BIC',
+    category: 'BIC',
+    pattern: /(?:BIC|SWIFT)[:\s]*([A-Z]{4}[A-Z]{2}[A-Z0-9]{2}(?:[A-Z0-9]{3})?)\b/gi,
+    priority: 9,
+  },
+  {
+    name: 'Fahrzeug-Kennzeichen',
+    category: 'Fahrzeug',
+    pattern: /\b[A-ZÄÖÜ]{1,3}[-\s][A-Z]{1,2}\s?\d{1,4}[EH]?\b/g,
+    priority: 7,
+  },
+  {
     name: 'E-Mail',
     category: 'E-Mail',
     pattern: /\b[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}\b/g,
@@ -53,7 +77,13 @@ const REGEX_RULES: RegexRule[] = [
   {
     name: 'Steuer-ID',
     category: 'Steuer-ID',
-    pattern: /\b\d{2,3}\s?[\/\s]\s?\d{3}\s?[\/\s]\s?\d{4,5}\b/g,
+    pattern: /\b(?<![\/\d])\d{11}(?![\/\d])\b/g,
+    priority: 8,
+  },
+  {
+    name: 'Steuernummer',
+    category: 'Steuernummer',
+    pattern: /\b\d{2,3}\/\d{3}\/\d{4,5}\b/g,
     priority: 8,
   },
   {

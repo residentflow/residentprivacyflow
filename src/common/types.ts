@@ -16,8 +16,13 @@ export type PIICategory =
   | 'Fax'
   | 'Datum'
   | 'Steuer-ID'
+  | 'Steuernummer'
   | 'URL'
   | 'Kontonummer'
+  | 'Kreditkarte'
+  | 'Sozialversicherung'
+  | 'BIC'
+  | 'Fahrzeug'
   | 'Manuell'
   | 'Unbekannt';
 
