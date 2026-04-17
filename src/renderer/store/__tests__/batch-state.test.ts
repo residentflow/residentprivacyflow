@@ -42,10 +42,10 @@ describe('Batch State — Dokument-Management', () => {
     expect(state.activeDocumentId).toBe('d2');
   });
 
-  it('REMOVE_DOCUMENT: letztes Dokument → view = start', () => {
+  it('REMOVE_DOCUMENT: letztes Dokument → view bleibt editor (EmptyState), activeId null', () => {
     let state = reducer(initialState, { type: 'ADD_DOCUMENT', doc: makeDoc('d1') });
     state = reducer(state, { type: 'REMOVE_DOCUMENT', id: 'd1' });
-    expect(state.view).toBe('start');
+    expect(state.view).toBe('editor');
     expect(state.activeDocumentId).toBeNull();
   });
 

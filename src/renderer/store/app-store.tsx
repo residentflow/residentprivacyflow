@@ -41,6 +41,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
     dispatch({ type: 'ADD_DOCUMENT_REDACTION', docId, redaction: newRedaction });
     dispatch({ type: 'UPDATE_DOCUMENT', docId, updates: { manualCounter: counter } });
+    // Auto-Select + Auto-Edit: neuer Eintrag wird sofort markiert und im Editiermodus geöffnet
+    dispatch({ type: 'SELECT_REDACTION', id: newRedaction.id });
+    dispatch({ type: 'SET_EDITING_REDACTION', id: newRedaction.id });
     dispatch({
       type: 'PUSH_UNDO',
       docId,

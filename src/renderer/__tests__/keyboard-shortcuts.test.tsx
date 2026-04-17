@@ -214,7 +214,7 @@ describe('Keyboard Handler — Editor-Shortcuts', () => {
   // ── Guard: view !== editor ───────────────────────────────────
 
   it('ArrowRight ignoriert wenn view !== editor', () => {
-    const state = makeState({}, { view: 'start' });
+    const state = makeState({}, { view: 'settings' });
     const handler = buildKeyboardHandler(state, getActiveDoc(state), deps);
     const e = new KeyboardEvent('keydown', { key: 'ArrowRight' });
     Object.defineProperty(e, 'target', { value: document.body });

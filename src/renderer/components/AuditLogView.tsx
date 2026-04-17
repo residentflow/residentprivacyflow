@@ -36,7 +36,7 @@ export default function AuditLogView() {
       <div className="app-toolbar">
         <button
           className="btn btn-ghost btn-sm"
-          onClick={() => dispatch({ type: 'SET_VIEW', view: 'start' })}
+          onClick={() => dispatch({ type: 'SET_VIEW', view: 'editor' })}
         >
           ← Zurück
         </button>

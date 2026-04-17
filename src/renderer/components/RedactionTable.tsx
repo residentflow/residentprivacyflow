@@ -37,7 +37,15 @@ export default function RedactionTable() {
   const { state, dispatch, updateRedactionVariable } = useAppState();
   const activeDoc = useActiveDocument();
   const [filter, setFilter] = useState<FilterStatus>('alle');
-  const [editingId, setEditingId] = useState<string | null>(null);
+  const [localEditingId, setLocalEditingId] = useState<string | null>(null);
+  // Externer Auto-Edit-Trigger (z.B. nach manueller Schwärzung) hat Vorrang
+  const editingId = state.editingRedactionId ?? localEditingId;
+  const setEditingId = useCallback((id: string | null) => {
+    setLocalEditingId(id);
+    if (state.editingRedactionId) {
+      dispatch({ type: 'SET_EDITING_REDACTION', id: null });
+    }
+  }, [state.editingRedactionId, dispatch]);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [lastClickedIdx, setLastClickedIdx] = useState<number | null>(null);
   const shiftPressedRef = useRef(false);

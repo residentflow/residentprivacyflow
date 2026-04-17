@@ -63,9 +63,10 @@ export interface AppState {
   zoom: number;
   selectedRedactionId: string | null;
   hoveredRedactionId: string | null;
+  editingRedactionId: string | null;
   isExporting: boolean;
   exportProgress: string;
-  view: 'start' | 'editor' | 'audit' | 'settings';
+  view: 'editor' | 'audit' | 'settings';
   error: string | null;
 }
 
@@ -79,9 +80,10 @@ export const initialState: AppState = {
   zoom: 100,
   selectedRedactionId: null,
   hoveredRedactionId: null,
+  editingRedactionId: null,
   isExporting: false,
   exportProgress: '',
-  view: 'start',
+  view: 'editor',
   error: null,
 };
 
@@ -111,10 +113,11 @@ export type Action =
   | { type: 'SET_EXPORT_QUALITY'; quality: ExportQuality }
   | { type: 'SET_ZOOM'; zoom: number }
   | { type: 'SELECT_REDACTION'; id: string | null }
+  | { type: 'SET_EDITING_REDACTION'; id: string | null }
   | { type: 'HOVER_REDACTION'; id: string | null }
   | { type: 'SET_EXPORTING'; isExporting: boolean; progress?: string }
   | { type: 'SET_EXPORT_PROGRESS'; progress: string }
-  | { type: 'SET_VIEW'; view: 'start' | 'editor' | 'audit' | 'settings' }
+  | { type: 'SET_VIEW'; view: 'editor' | 'audit' | 'settings' }
   | { type: 'SET_ERROR'; error: string | null }
   // Undo/Redo (pro Dokument)
   | { type: 'PUSH_UNDO'; docId: string; action: UndoAction }
@@ -176,7 +179,7 @@ export function reducer(state: AppState, action: Action): AppState {
         ...state,
         documents: remaining,
         activeDocumentId: nextActiveId,
-        view: remaining.length === 0 ? 'start' : state.view,
+        view: 'editor',
         selectedRedactionId: null,
       };
     }
@@ -277,6 +280,7 @@ export function reducer(state: AppState, action: Action): AppState {
     case 'SET_EXPORT_QUALITY': return { ...state, exportQuality: action.quality };
     case 'SET_ZOOM': return { ...state, zoom: Math.max(25, Math.min(400, action.zoom)) };
     case 'SELECT_REDACTION': return { ...state, selectedRedactionId: action.id };
+    case 'SET_EDITING_REDACTION': return { ...state, editingRedactionId: action.id };
     case 'HOVER_REDACTION': return { ...state, hoveredRedactionId: action.id };
     case 'SET_EXPORTING': return { ...state, isExporting: action.isExporting, exportProgress: action.progress || '' };
     case 'SET_EXPORT_PROGRESS': return { ...state, exportProgress: action.progress };

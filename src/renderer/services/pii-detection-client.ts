@@ -17,7 +17,7 @@ const REGEX_RULES: RegexRule[] = [
   {
     name: 'IBAN',
     category: 'IBAN',
-    pattern: /\b[A-Z]{2}\d{2}\s?\d{4}\s?\d{4}\s?\d{4}\s?\d{4}\s?\d{2,4}\b/gi,
+    pattern: /\b[A-Z]{2}\d{2}(?:\s?[A-Z0-9]){11,30}\b/g,
     priority: 10,
   },
   {
@@ -68,12 +68,7 @@ const REGEX_RULES: RegexRule[] = [
     pattern: /(?:Fax|Telefax)[:\s]*(?:(?:\+49|0049)\s?)?(?:0?\d{1,5})\s?[\d\s/\-]{4,12}/gi,
     priority: 8,
   },
-  {
-    name: 'Datum',
-    category: 'Datum',
-    pattern: /\b(?:0?[1-9]|[12]\d|3[01])\.(?:0?[1-9]|1[0-2])\.(?:19|20)\d{2}\b/g,
-    priority: 6,
-  },
+  // Datum: INTENTIONALLY NOT detected — Datum ist kein schützenswertes Feld per GDPR-Standard
   {
     name: 'Steuer-ID',
     category: 'Steuer-ID',

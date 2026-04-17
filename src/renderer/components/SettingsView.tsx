@@ -33,7 +33,7 @@ export default function SettingsView() {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
         <div className="app-toolbar">
-          <button className="btn btn-ghost btn-sm" onClick={() => dispatch({ type: 'SET_VIEW', view: 'start' })}>← Zurück</button>
+          <button className="btn btn-ghost btn-sm" onClick={() => dispatch({ type: 'SET_VIEW', view: 'editor' })}>← Zurück</button>
         </div>
         <div className="audit-panel"><div className="empty-state"><div className="loading-spinner" /><div className="empty-state-text">Wird geladen…</div></div></div>
       </div>
@@ -43,7 +43,7 @@ export default function SettingsView() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       <div className="app-toolbar">
-        <button className="btn btn-ghost btn-sm" onClick={() => dispatch({ type: 'SET_VIEW', view: 'start' })}>
+        <button className="btn btn-ghost btn-sm" onClick={() => dispatch({ type: 'SET_VIEW', view: 'editor' })}>
           ← Zurück
         </button>
         <div className="toolbar-separator" />

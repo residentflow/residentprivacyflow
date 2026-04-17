@@ -107,7 +107,7 @@ export function createMenu(mainWindow: BrowserWindow): void {
           label: 'Mehr erfahren',
           click: async () => {
             const { shell } = require('electron');
-            await shell.openExternal('https://community.residentprivacyflow.de');
+            await shell.openExternal('https://community.residentflow.de');
           },
         },
       ] as MenuItemConstructorOptions[],

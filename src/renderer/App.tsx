@@ -1,7 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { AppProvider, useAppState, useActiveDocument } from './store/app-store';
 import { openPdfFile } from './services/file-handler';
-import StartPage from './components/StartPage';
 import EditorLayout from './components/EditorLayout';
 import AuditLogView from './components/AuditLogView';
 import SettingsView from './components/SettingsView';
@@ -207,7 +206,6 @@ function AppContent() {
         <LoadingOverlay />
       )}
 
-      {state.view === 'start' && <StartPage />}
       {state.view === 'editor' && <EditorLayout />}
       {state.view === 'audit' && <AuditLogView />}
       {state.view === 'settings' && <SettingsView />}

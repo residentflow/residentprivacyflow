@@ -60,6 +60,8 @@ export default function EditorLayout() {
     return () => window.removeEventListener('keydown', handleEscape, { capture: true });
   }, [drawMode, groupPopup]);
 
+  const hasDocuments = state.documents.length > 0;
+
   return (
     <div className="editor-layout">
       <TabBar
@@ -69,12 +71,19 @@ export default function EditorLayout() {
         onCloseTab={(id) => dispatch({ type: 'REMOVE_DOCUMENT', id })}
         onOpenFile={handleOpenFile}
       />
-      <Toolbar drawMode={drawMode} onDrawModeChange={setDrawMode} />
-      <div className="editor-content">
-        <SidebarThumbnails />
-        <PdfViewer drawMode={drawMode} onGroupSelect={handleGroupSelect} />
-        <RedactionTable />
-      </div>
+      {hasDocuments ? (
+        <>
+          <Toolbar drawMode={drawMode} onDrawModeChange={setDrawMode} />
+          <div className="editor-content">
+            <SidebarThumbnails />
+            <PdfViewer drawMode={drawMode} onGroupSelect={handleGroupSelect} />
+            <RedactionTable />
+          </div>
+        </>
+      ) : (
+        <EmptyState onOpenFile={handleOpenFile} onOpenSettings={() => dispatch({ type: 'SET_VIEW', view: 'settings' })}
+          onOpenAudit={() => dispatch({ type: 'SET_VIEW', view: 'audit' })} />
+      )}
       {groupPopup && (
         <GroupAssignPopup
           position={groupPopup.position}
@@ -84,6 +93,44 @@ export default function EditorLayout() {
           onCancel={() => setGroupPopup(null)}
         />
       )}
+    </div>
+  );
+}
+
+function EmptyState({
+  onOpenFile, onOpenSettings, onOpenAudit,
+}: { onOpenFile: () => void; onOpenSettings: () => void; onOpenAudit: () => void }) {
+  return (
+    <div style={{
+      flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
+      padding: 'var(--space-xl)', background: 'var(--bg-canvas)',
+    }}>
+      <div style={{ textAlign: 'center', maxWidth: 480 }}>
+        <div style={{ fontSize: 48, marginBottom: 'var(--space-md)' }}>📄</div>
+        <h2 style={{ margin: '0 0 var(--space-sm)', color: 'var(--text-primary)' }}>
+          Keine Dokumente geöffnet
+        </h2>
+        <p style={{ color: 'var(--text-secondary)', marginBottom: 'var(--space-lg)' }}>
+          Öffne eine oder mehrere PDF-Dateien, um mit der Analyse und Schwärzung zu beginnen.
+          Mehrere Dateien können im Dialog gleichzeitig ausgewählt werden.
+        </p>
+        <button
+          className="btn btn-primary btn-lg"
+          onClick={onOpenFile}
+          id="btn-open-file-empty"
+          style={{ padding: '14px 28px', fontSize: 16, fontWeight: 600 }}
+        >
+          + PDF-Datei(en) öffnen
+        </button>
+        <div style={{ marginTop: 'var(--space-lg)', display: 'flex', gap: 'var(--space-sm)', justifyContent: 'center' }}>
+          <button className="btn btn-ghost btn-sm" onClick={onOpenSettings}>
+            ⚙️ Einstellungen
+          </button>
+          <button className="btn btn-ghost btn-sm" onClick={onOpenAudit}>
+            📋 Verarbeitungsprotokoll
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
