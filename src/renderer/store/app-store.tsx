@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useReducer, useCallback, ReactNode } from 'react';
 import { RedactionEntry, BoundingBox } from '../../common/types';
 import { v4 as uuidv4 } from 'uuid';
-import { AppState, Action, initialState, reducer } from './types-and-reducer';
+import { AppState, Action, initialState, reducer, DocumentState } from './types-and-reducer';
 
 // ─── Context ────────────────────────────────────────────────
 
@@ -20,7 +20,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const addManualRedaction = useCallback((bounds: BoundingBox, page: number) => {
-    const counter = state.manualCounter + 1;
+    const activeDoc = state.documents.find(d => d.id === state.activeDocumentId);
+    if (!activeDoc) return;
+
+    const counter = activeDoc.manualCounter + 1;
     const newRedaction: RedactionEntry = {
       id: uuidv4(),
       variableName: `MANUELL_${String(counter).padStart(3, '0')}`,
@@ -33,11 +36,14 @@ export function AppProvider({ children }: { children: ReactNode }) {
       source: 'manual',
     };
 
-    const prevRedactions = [...state.redactions];
-    dispatch({ type: 'ADD_REDACTION', redaction: newRedaction });
-    dispatch({ type: 'INCREMENT_MANUAL_COUNTER' });
+    const prevRedactions = [...activeDoc.redactions];
+    const docId = state.activeDocumentId!;
+
+    dispatch({ type: 'ADD_DOCUMENT_REDACTION', docId, redaction: newRedaction });
+    dispatch({ type: 'UPDATE_DOCUMENT', docId, updates: { manualCounter: counter } });
     dispatch({
       type: 'PUSH_UNDO',
+      docId,
       action: {
         type: 'add_manual',
         description: 'Manuelle Schwärzung hinzugefügt',
@@ -45,16 +51,19 @@ export function AppProvider({ children }: { children: ReactNode }) {
         redo: () => [...prevRedactions, newRedaction],
       },
     });
-  }, [state.manualCounter, state.redactions]);
+  }, [state.documents, state.activeDocumentId]);
 
   const updateRedactionVariable = useCallback((id: string, newName: string): boolean => {
-    const entry = state.redactions.find(r => r.id === id);
+    const activeDoc = state.documents.find(d => d.id === state.activeDocumentId);
+    if (!activeDoc) return false;
+
+    const entry = activeDoc.redactions.find(r => r.id === id);
     if (!entry) return false;
 
-    const conflict = state.redactions.find(
+    // Conflict check within the active document
+    const conflict = activeDoc.redactions.find(
       r => r.id !== id && r.variableName === newName && r.originalContent !== entry.originalContent
     );
-
     if (conflict) {
       dispatch({
         type: 'SET_ERROR',
@@ -63,20 +72,34 @@ export function AppProvider({ children }: { children: ReactNode }) {
       return false;
     }
 
-    const prevRedactions = [...state.redactions];
-    state.redactions.forEach(r => {
-      if (r.originalContent === entry.originalContent && r.category === entry.category) {
-        dispatch({ type: 'UPDATE_REDACTION', id: r.id, updates: { variableName: newName } });
-      }
-    });
+    const key = `${entry.originalContent}|${entry.category}`;
 
+    // 1. Update registry
+    dispatch({ type: 'UPDATE_VARIABLE_REGISTRY', key, variableName: newName });
+
+    // 2. Sync across ALL documents
+    for (const d of state.documents) {
+      for (const r of d.redactions) {
+        if (r.originalContent === entry.originalContent && r.category === entry.category) {
+          dispatch({
+            type: 'UPDATE_DOCUMENT_REDACTION',
+            docId: d.id, id: r.id,
+            updates: { variableName: newName },
+          });
+        }
+      }
+    }
+
+    // 3. Push undo for the active doc
+    const prevRedactions = [...activeDoc.redactions];
     dispatch({
       type: 'PUSH_UNDO',
+      docId: state.activeDocumentId!,
       action: {
         type: 'update_variable',
         description: `Variable umbenannt: ${entry.variableName} → ${newName}`,
         undo: () => prevRedactions,
-        redo: () => state.redactions.map(r =>
+        redo: () => activeDoc.redactions.map(r =>
           r.originalContent === entry.originalContent && r.category === entry.category
             ? { ...r, variableName: newName }
             : r
@@ -85,15 +108,19 @@ export function AppProvider({ children }: { children: ReactNode }) {
     });
 
     return true;
-  }, [state.redactions]);
+  }, [state.documents, state.activeDocumentId]);
 
   const performUndo = useCallback(() => {
-    dispatch({ type: 'UNDO' });
-  }, []);
+    if (state.activeDocumentId) {
+      dispatch({ type: 'UNDO', docId: state.activeDocumentId });
+    }
+  }, [state.activeDocumentId]);
 
   const performRedo = useCallback(() => {
-    dispatch({ type: 'REDO' });
-  }, []);
+    if (state.activeDocumentId) {
+      dispatch({ type: 'REDO', docId: state.activeDocumentId });
+    }
+  }, [state.activeDocumentId]);
 
   return (
     <AppContext.Provider value={{ state, dispatch, addManualRedaction, updateRedactionVariable, performUndo, performRedo }}>
@@ -108,6 +135,11 @@ export function useAppState(): AppContextType {
     throw new Error('useAppState must be used within AppProvider');
   }
   return context;
+}
+
+export function useActiveDocument(): DocumentState | null {
+  const { state } = useAppState();
+  return state.documents.find(d => d.id === state.activeDocumentId) ?? null;
 }
 
 export type { AppState, Action };

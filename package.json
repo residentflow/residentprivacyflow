@@ -1,6 +1,6 @@
 {
   "name": "resident-privacy-flow",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "Lokale Windows-Desktop-Anwendung zur PDF-Schwärzung und Pseudonymisierung",
   "main": "dist/main/main/main.js",
   "author": "ResidentPrivacyFlow",
@@ -15,6 +15,7 @@
     "dist": "npm run build && electron-builder --win --x64",
     "dist:exe": "npm run build && electron-builder --win nsis --x64",
     "dist:msi": "npm run build && electron-builder --win msi --x64",
+    "test": "vitest run",
     "postinstall": "electron-builder install-app-deps"
   },
   "build": {
@@ -81,9 +82,13 @@
   "dependencies": {
     "jspdf": "^2.5.1",
     "pdfjs-dist": "^3.11.174",
+    "tesseract.js": "^5.1.1",
     "uuid": "^9.0.0"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
     "@types/react": "^18.2.45",
     "@types/react-dom": "^18.2.18",
     "@types/uuid": "^9.0.7",
@@ -91,10 +96,12 @@
     "concurrently": "^8.2.2",
     "electron": "^28.1.0",
     "electron-builder": "^24.9.1",
+    "jsdom": "^29.0.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "typescript": "^5.3.3",
     "vite": "^5.0.10",
+    "vitest": "^4.1.4",
     "wait-on": "^7.2.0"
   }
 }

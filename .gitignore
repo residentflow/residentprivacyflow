@@ -17,3 +17,7 @@ tsc-errors.txt
 tsc-out.log
 build-errors.log
 vite-build.log
+
+# Editor/IDE local state
+.claude/
+.vscode/settings.local.json

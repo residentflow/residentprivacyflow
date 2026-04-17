@@ -15,5 +15,13 @@
     "baseUrl": "."
   },
   "include": ["src/main/**/*", "src/common/**/*"],
-  "exclude": ["node_modules", "src/renderer/**/*"]
+  "exclude": [
+    "node_modules",
+    "src/renderer/**/*",
+    "src/**/__tests__/**",
+    "src/**/__mocks__/**",
+    "src/**/*.test.ts",
+    "src/**/*.test.tsx",
+    "src/test-setup.ts"
+  ]
 }

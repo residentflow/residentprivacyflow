@@ -122,6 +122,7 @@ export interface CSVRow {
   gruppe: string;
   status: string;
   seite: string;
+  dokument?: string;
 }
 
 /** App settings */
@@ -133,6 +134,8 @@ export interface AppSettings {
   defaultMode: RedactionMode;
   lastOpenDirectory: string;
   lastExportDirectory: string;
+  ocrConfidenceThreshold: number;
+  ocrLanguages: string[];
 }
 
 /** IPC Channel names */
@@ -158,6 +161,9 @@ export const IPC_CHANNELS = {
   // App
   GET_APP_PATH: 'app:getPath',
   CLEAN_TEMP: 'app:cleanTemp',
+
+  // Batch export
+  EXPORT_ALL_PDFS: 'pdf:exportAll',
 
   // Menu-triggered events (Main -> Renderer)
   MENU_OPEN_FILE: 'menu:open-file',

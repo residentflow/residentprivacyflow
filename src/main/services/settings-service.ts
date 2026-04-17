@@ -11,6 +11,8 @@ const DEFAULT_SETTINGS: AppSettings = {
   defaultMode: 'schwärzen',
   lastOpenDirectory: '',
   lastExportDirectory: '',
+  ocrConfidenceThreshold: 0.5,
+  ocrLanguages: ['deu', 'eng'],
 };
 
 export class SettingsService {

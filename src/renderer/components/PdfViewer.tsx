@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
-import { useAppState } from '../store/app-store';
+import { useAppState, useActiveDocument } from '../store/app-store';
 import { BoundingBox, RedactionEntry } from '../../common/types';
 import { getPdfjs } from '../services/pdf-init';
 
@@ -27,8 +27,31 @@ interface ResizeState {
   originalBounds: BoundingBox;
 }
 
-export default function PdfViewer() {
+interface PdfViewerProps {
+  drawMode: 'redaction' | 'groupselect';
+  onGroupSelect?: (affectedIds: string[], position: { x: number; y: number }) => void;
+}
+
+export function findOverlappingRedactions(
+  redactions: RedactionEntry[],
+  rect: BoundingBox,
+  page: number
+): RedactionEntry[] {
+  return redactions.filter(r => {
+    if (r.page !== page) return false;
+    const b = r.bounds;
+    return !(
+      rect.x + rect.width < b.x ||
+      b.x + b.width < rect.x ||
+      rect.y + rect.height < b.y ||
+      b.y + b.height < rect.y
+    );
+  });
+}
+
+export default function PdfViewer({ drawMode, onGroupSelect }: PdfViewerProps) {
   const { state, dispatch, addManualRedaction } = useAppState();
+  const activeDoc = useActiveDocument();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
@@ -47,24 +70,28 @@ export default function PdfViewer() {
 
   const scale = state.zoom / 100;
 
+  const activeId = state.activeDocumentId;
+  const fileData = activeDoc?.fileData ?? null;
+  const currentPage = activeDoc?.currentPage ?? 1;
+  const redactions = activeDoc?.redactions ?? [];
+
   // Render the current page
   useEffect(() => {
     const renderPage = async () => {
-      if (!state.fileData || !canvasRef.current) return;
+      if (!fileData || !canvasRef.current || !activeId) return;
 
       try {
         const { getPdfDocument } = await import('../services/pdf-init');
-        const pdf = await getPdfDocument(state.fileData);
-        const page = await pdf.getPage(state.currentPage);
+        const pdf = await getPdfDocument(fileData);
+        const page = await pdf.getPage(currentPage);
         const devicePixelRatio = window.devicePixelRatio || 1;
         const viewport = page.getViewport({ scale: scale * devicePixelRatio });
 
         const canvas = canvasRef.current;
-        if (!canvas) return; // Add check here to prevent crash if unmounted
+        if (!canvas) return;
         canvas.width = viewport.width;
         canvas.height = viewport.height;
-        
-        // The canvas display size remains according to the CSS scale
+
         canvas.style.width = `${viewport.width / devicePixelRatio}px`;
         canvas.style.height = `${viewport.height / devicePixelRatio}px`;
 
@@ -81,11 +108,11 @@ export default function PdfViewer() {
     };
 
     renderPage();
-  }, [state.fileData, state.currentPage, scale]);
+  }, [fileData, currentPage, scale, activeId]);
 
   // Get redactions for current page
-  const pageRedactions = state.redactions.filter(
-    r => r.page === state.currentPage && r.status !== 'abgelehnt'
+  const pageRedactions = redactions.filter(
+    r => r.page === currentPage && r.status !== 'abgelehnt'
   );
 
   const toScreenCoords = (bounds: BoundingBox) => ({
@@ -139,19 +166,19 @@ export default function PdfViewer() {
       setDrawState(prev => ({ ...prev, currentX: x, currentY: y }));
     }
 
-    if (dragState.isDragging) {
+    if (dragState.isDragging && activeId) {
       const pdfCoords = toPdfCoords(x - dragState.offsetX, y - dragState.offsetY);
-      const entry = state.redactions.find(r => r.id === dragState.redactionId);
+      const entry = redactions.find(r => r.id === dragState.redactionId);
       if (entry) {
         dispatch({
-          type: 'UPDATE_REDACTION',
-          id: dragState.redactionId,
+          type: 'UPDATE_DOCUMENT_REDACTION',
+          docId: activeId, id: dragState.redactionId,
           updates: { bounds: { ...entry.bounds, x: pdfCoords.x, y: pdfCoords.y } },
         });
       }
     }
 
-    if (resizeState.isResizing) {
+    if (resizeState.isResizing && activeId) {
       const dx = (x - resizeState.startX) / scale;
       const dy = (y - resizeState.startY) / scale;
       const ob = resizeState.originalBounds;
@@ -180,9 +207,9 @@ export default function PdfViewer() {
           break;
       }
 
-      dispatch({ type: 'UPDATE_REDACTION', id: resizeState.redactionId, updates: { bounds: newBounds } });
+      dispatch({ type: 'UPDATE_DOCUMENT_REDACTION', docId: activeId, id: resizeState.redactionId, updates: { bounds: newBounds } });
     }
-  }, [drawState.isDrawing, dragState, resizeState, scale, dispatch, state.redactions]);
+  }, [drawState.isDrawing, dragState, resizeState, scale, dispatch, redactions, activeId]);
 
   const handleMouseUp = useCallback(() => {
     if (drawState.isDrawing) {
@@ -198,7 +225,19 @@ export default function PdfViewer() {
           width: w / scale,
           height: h / scale,
         };
-        addManualRedaction(pdfBounds, state.currentPage);
+
+        if (drawMode === 'groupselect' && onGroupSelect) {
+          const overlapping = findOverlappingRedactions(redactions, pdfBounds, currentPage);
+          if (overlapping.length > 0) {
+            const rect = overlayRef.current?.getBoundingClientRect();
+            const screenPos = rect
+              ? { x: rect.left + drawState.currentX, y: rect.top + drawState.currentY }
+              : { x: drawState.currentX, y: drawState.currentY };
+            onGroupSelect(overlapping.map(r => r.id), screenPos);
+          }
+        } else {
+          addManualRedaction(pdfBounds, currentPage);
+        }
       }
 
       setDrawState({ isDrawing: false, startX: 0, startY: 0, currentX: 0, currentY: 0 });
@@ -214,14 +253,14 @@ export default function PdfViewer() {
         startX: 0, startY: 0, originalBounds: { x: 0, y: 0, width: 0, height: 0 },
       });
     }
-  }, [drawState, dragState, resizeState, scale, state.currentPage, addManualRedaction]);
+  }, [drawState, dragState, resizeState, scale, currentPage, redactions, addManualRedaction, drawMode, onGroupSelect]);
 
   const handleRedactionDragStart = useCallback((e: React.MouseEvent, redactionId: string) => {
     e.stopPropagation();
     const rect = overlayRef.current?.getBoundingClientRect();
     if (!rect) return;
 
-    const entry = state.redactions.find(r => r.id === redactionId);
+    const entry = redactions.find(r => r.id === redactionId);
     if (!entry) return;
 
     const screen = toScreenCoords(entry.bounds);
@@ -230,11 +269,11 @@ export default function PdfViewer() {
 
     dispatch({ type: 'SELECT_REDACTION', id: redactionId });
     setDragState({ isDragging: true, redactionId, offsetX, offsetY });
-  }, [state.redactions, scale, dispatch]);
+  }, [redactions, scale, dispatch]);
 
   const handleResizeStart = useCallback((e: React.MouseEvent, redactionId: string, handle: 'nw' | 'ne' | 'sw' | 'se') => {
     e.stopPropagation();
-    const entry = state.redactions.find(r => r.id === redactionId);
+    const entry = redactions.find(r => r.id === redactionId);
     if (!entry) return;
 
     const rect = overlayRef.current?.getBoundingClientRect();
@@ -245,17 +284,19 @@ export default function PdfViewer() {
       startX: e.clientX - rect.left, startY: e.clientY - rect.top,
       originalBounds: { ...entry.bounds },
     });
-  }, [state.redactions]);
+  }, [redactions]);
 
   const handleAccept = useCallback((e: React.MouseEvent, id: string) => {
     e.stopPropagation();
-    dispatch({ type: 'ACCEPT_SUGGESTION', id });
-  }, [dispatch]);
+    if (!activeId) return;
+    dispatch({ type: 'ACCEPT_DOCUMENT_SUGGESTION', docId: activeId, id });
+  }, [dispatch, activeId]);
 
   const handleReject = useCallback((e: React.MouseEvent, id: string) => {
     e.stopPropagation();
-    dispatch({ type: 'REJECT_SUGGESTION', id });
-  }, [dispatch]);
+    if (!activeId) return;
+    dispatch({ type: 'REJECT_DOCUMENT_SUGGESTION', docId: activeId, id });
+  }, [dispatch, activeId]);
 
   const getOverlayClass = (entry: RedactionEntry): string => {
     const classes = ['redaction-overlay'];
@@ -335,7 +376,7 @@ export default function PdfViewer() {
 
             {drawingRect && (
               <div
-                className="drawing-rect"
+                className={drawMode === 'groupselect' ? 'drawing-rect group-select' : 'drawing-rect'}
                 style={{
                   left: drawingRect.left, top: drawingRect.top,
                   width: drawingRect.width, height: drawingRect.height,
@@ -352,13 +393,13 @@ export default function PdfViewer() {
         gap: 'var(--space-md)', padding: 'var(--space-sm) var(--space-lg)',
         background: 'var(--bg-surface)', borderTop: '1px solid var(--border-subtle)', fontSize: 13,
       }}>
-        <button className="btn btn-ghost btn-sm" disabled={state.currentPage <= 1}
-          onClick={() => dispatch({ type: 'SET_PAGE', page: state.currentPage - 1 })} id="btn-prev-page">◀</button>
+        <button className="btn btn-ghost btn-sm" disabled={currentPage <= 1}
+          onClick={() => activeId && dispatch({ type: 'SET_DOCUMENT_PAGE', docId: activeId, page: currentPage - 1 })} id="btn-prev-page">◀</button>
         <span style={{ color: 'var(--text-secondary)' }}>
-          Seite {state.currentPage} von {state.pageCount}
+          Seite {currentPage} von {activeDoc?.pageCount ?? 0}
         </span>
-        <button className="btn btn-ghost btn-sm" disabled={state.currentPage >= state.pageCount}
-          onClick={() => dispatch({ type: 'SET_PAGE', page: state.currentPage + 1 })} id="btn-next-page">▶</button>
+        <button className="btn btn-ghost btn-sm" disabled={currentPage >= (activeDoc?.pageCount ?? 0)}
+          onClick={() => activeId && dispatch({ type: 'SET_DOCUMENT_PAGE', docId: activeId, page: currentPage + 1 })} id="btn-next-page">▶</button>
       </div>
     </div>
   );

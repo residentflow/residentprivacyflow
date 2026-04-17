@@ -7,7 +7,7 @@ import { IPC_CHANNELS, AppSettings } from '../common/types';
  */
 contextBridge.exposeInMainWorld('electronAPI', {
   // File dialogs
-  openFileDialog: (): Promise<string | null> =>
+  openFileDialog: (): Promise<string[]> =>
     ipcRenderer.invoke(IPC_CHANNELS.OPEN_FILE_DIALOG),
 
   saveFileDialog: (defaultName: string): Promise<string | null> =>

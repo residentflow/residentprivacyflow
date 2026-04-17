@@ -56,19 +56,18 @@ function createWindow(): void {
 function registerIpcHandlers(): void {
   // File dialog
   ipcMain.handle(IPC_CHANNELS.OPEN_FILE_DIALOG, async () => {
-    if (!mainWindow) return null;
+    if (!mainWindow) return [];
     const result = await dialog.showOpenDialog(mainWindow, {
       title: 'PDF-Datei öffnen',
       filters: [{ name: 'PDF-Dateien', extensions: ['pdf'] }],
-      properties: ['openFile'],
+      properties: ['openFile', 'multiSelections'],
       defaultPath: settingsService.get('lastOpenDirectory') || app.getPath('documents'),
     });
     if (!result.canceled && result.filePaths.length > 0) {
-      const filePath = result.filePaths[0];
-      settingsService.set('lastOpenDirectory', path.dirname(filePath));
-      return filePath;
+      settingsService.set('lastOpenDirectory', path.dirname(result.filePaths[0]));
+      return result.filePaths;
     }
-    return null;
+    return [];
   });
 
   // Save dialog
@@ -119,8 +118,17 @@ function registerIpcHandlers(): void {
     sourceFilePath: string;
     redactions: any[];
     pdfData?: Uint8Array;
+    combinedCsvExports?: { fileName: string; rows: any[] }[];
   }) => {
     const exportService = new PdfExportService();
+
+    // Combined CSV export (no PDF data)
+    if (options.combinedCsvExports && options.combinedCsvExports.length > 0 && !options.pdfData?.length) {
+      const csvContent = exportService.generateCombinedCSV(options.combinedCsvExports);
+      fs.writeFileSync(options.outputPath, '\uFEFF' + csvContent, 'utf-8');
+      return { pdfPath: '', csvPath: options.outputPath };
+    }
+
     return exportService.exportPdf(
       options.sourceFilePath,
       options.redactions,

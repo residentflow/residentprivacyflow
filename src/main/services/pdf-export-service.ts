@@ -104,4 +104,44 @@ export class PdfExportService {
   private escapeCSV(value: string): string {
     return value.replace(/"/g, '""');
   }
+
+  /**
+   * Generate a combined CSV from multiple documents, with a 'Dokument' column.
+   * Deduplicates entries with the same Bezeichnung, merging document names.
+   */
+  generateCombinedCSV(exports: { fileName: string; rows: CSVRow[] }[]): string {
+    const header = ['Bezeichnung', 'Inhalt', 'Typ', 'Gruppe', 'Status', 'Seite', 'Dokument']
+      .map(v => this.escapeCsvValue(v)).join(';');
+
+    const merged = new Map<string, CSVRow & { dokumente: Set<string> }>();
+    for (const { fileName, rows } of exports) {
+      for (const row of rows) {
+        const existing = merged.get(row.bezeichnung);
+        if (existing) existing.dokumente.add(fileName);
+        else merged.set(row.bezeichnung, { ...row, dokumente: new Set([fileName]) });
+      }
+    }
+
+    const lines = Array.from(merged.values()).map(row =>
+      [row.bezeichnung, row.inhalt, row.typ, row.gruppe, row.status, row.seite,
+       [...row.dokumente].join(', ')]
+      .map(v => this.escapeCsvValue(v)).join(';')
+    );
+
+    return [header, ...lines].join('\n');
+  }
+
+  private escapeCsvValue(v: string): string {
+    const sanitized = this.sanitizeCsvCell(v);
+    return `"${sanitized.replace(/"/g, '""')}"`;
+  }
+
+  private sanitizeCsvCell(value: string): string {
+    if (!value) return '';
+    const first = value.charAt(0);
+    if (['=', '+', '-', '@', '\t', '\r'].includes(first)) {
+      return `'${value}`;
+    }
+    return value;
+  }
 }
