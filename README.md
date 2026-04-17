@@ -25,22 +25,52 @@ ResidentPrivacyFlow ist eine spezialisierte Windows-Desktop-Anwendung zur Analys
 
 ## ✨ Hauptfunktionen
 
+### Kernfunktionen
 - **🚀 High-Performance PDF-Viewer**: Schnelles Laden und flüssiges Navigieren durch Dokumente jeder Größe.
 - **🔍 Interaktive Thumbnails**: Übersichtliche Seitenleiste für die schnelle Navigation.
 - **🖊️ Präzise manuelle Schwärzung**: Markieren Sie sensible Bereiche direkt im Dokument per Drag-and-Drop.
-- **🏷️ Intelligente Pseudonymisierung**: Weisen Sie Markierungen Variablen wie `Name_1`, `Adresse_1` oder `IBAN` zu.
-- **📊 Strukturierter Export**: Generieren Sie detaillierte CSV-Berichte über alle vorgenommenen Änderungen und Maskierungen.
+- **🏷️ Intelligente Pseudonymisierung**: Weisen Sie Markierungen Variablen wie `Name_1`, `Adresse_1` oder `IBAN_1` zu.
+- **📊 Strukturierter Export**: Generieren Sie detaillierte CSV-Berichte über alle vorgenommenen Änderungen.
 - **📦 Windows Optimiert**: Nahtlose Integration als native Desktop-Anwendung.
+
+### Neu in v1.1 🆕
+
+**Erweiterte PII-Erkennung (14 Kategorien):**
+- Name, Adresse, IBAN, E-Mail, Telefon, Mobilfunk, Fax, Steuer-ID, Steuernummer, URL, Kontonummer
+- **Neu:** Kreditkarte, Sozialversicherung, BIC/SWIFT, Fahrzeug-Kennzeichen
+
+**Batch-Verarbeitung:**
+- **Mehrere PDFs gleichzeitig geöffnet** in Tabs
+- **Variablenkonsistenz über Dokumente hinweg** (gleiche Person = gleicher Variablenname)
+- **Kombinierter CSV-Export** mit Dokument-Zuordnungsspalte
+- **Multi-Select im Datei-Dialog** — mehrere PDFs in einem Zug öffnen
+
+**OCR für gescannte PDFs:**
+- Tesseract.js v5 — vollständig offline, Deutsch + Englisch
+- Automatisch aktiviert bei Seiten ohne Textlayer
+
+**Workflow-Beschleunigung:**
+- **Gruppenzuweisung über Markierung**: Rechteck aufziehen → alle Schwärzungen der Gruppe zuweisen
+- **Export-Vorschau** vor dem Speichern
+- **Bulk-Aktionen**: Alle Vorschläge einer Kategorie akzeptieren/ablehnen
+- **Tastaturkürzel**: Pfeiltasten, Zoom, Modus-Wechsel, Akzeptieren/Ablehnen, Tab-Navigation
+
+**Sicherheit & Compliance:**
+- **PDF-Metadaten vollständig neutralisiert** (Autor, Erstellungsdatum, Bearbeitungsspuren)
+- **CSV-Injection-geschützt** (Excel-Formel-Angriffe blockiert)
+- **Byte-stabile xref-Struktur** im Export
 
 ---
 
 ## 🛠️ Technologie-Stack
 
-- **Frontend**: React 18 & Vite für eine moderne, reaktive Benüteroberfläche.
-- **Shell**: Electron zur Bereitstellung als native Desktop-App.
+- **Frontend**: React 18 & Vite 5 für eine moderne, reaktive Benutzeroberfläche.
+- **Shell**: Electron 28 zur Bereitstellung als native Desktop-App.
 - **Styling**: Vanilla CSS mit Fokus auf Performance und modernem Design.
-- **PDF-Engine**: Robustes Rendering basierend auf Industriestandards.
-- **Sprache**: TypeScript für maximale Typsicherheit und Wartbarkeit.
+- **PDF-Engine**: pdf.js (Rendering) + jsPDF (Export).
+- **OCR**: Tesseract.js v5 — 100% lokal, keine Cloud.
+- **Sprache**: TypeScript 5 im strict-mode.
+- **Testing**: Vitest + React Testing Library (138 Tests).
 
 ---
 
@@ -51,16 +81,28 @@ ResidentPrivacyFlow ist eine spezialisierte Windows-Desktop-Anwendung zur Analys
 - [npm](https://www.npmjs.com/)
 
 ### Installation & Betrieb
-```bash
-# Download:
-https://github.com/residentflow/residentprivacyflow/releases/download/v1.0.0/ResidentPrivacyFlow-1.0.0-x64.zip
 
-# Entpacken
-ZIP-Datei in lokalen Ordner entpacken
-
-# Anwendung starten
-ResidentPrivacyFlow.exe starten
+**Option A — NSIS-Installer (empfohlen):**
 ```
+1. ResidentPrivacyFlow-1.1.1-x64-Setup.exe herunterladen
+2. Doppelklick → Installation folgen
+3. App startet automatisch, Startmenü-Eintrag wird angelegt
+```
+
+**Option B — Portable (für USB-Stick):**
+```
+1. ResidentPrivacyFlow-1.1.1-x64-Portable.exe herunterladen
+2. Einzelne Datei — direkt ausführbar, keine Installation
+```
+
+**Option C — ZIP (manuell):**
+```
+1. ResidentPrivacyFlow-1.1.1-x64-Setup.zip herunterladen
+2. In lokalen Ordner entpacken
+3. ResidentPrivacyFlow.exe starten
+```
+
+Alle drei Downloads: [**GitHub Releases**](https://github.com/residentflow/residentprivacyflow/releases/latest)
 
 ### Build & Deployment
 Um eine ausführbare Windows-Datei zu erstellen:
@@ -86,13 +128,21 @@ Damit keine SmartScreen-Warnung ("Der Computer wurde durch Windows geschützt") 
 
 Die offizielle Release-Historie und die ausführbaren Dateien finden Sie auf der [**GitHub Releases Seite**](https://github.com/residentflow/residentprivacyflow/releases).
 
-- **v1.0.0 (Aktuell)**: Initiale Veröffentlichung mit vollem Funktionsumfang für PDF-Anzeige, Schwärzung und CSV-Export.
-- **Formate**: 
-  - `EXE` (Setup): Einfache Installation für Windows.
-  - `MSI` (Enterprise Installer): Für die IT-Verteilung.
-  - `ZIP` (Portable Version): Herunterladen, **entpacken** und direkt starten (keine Installation erforderlich).
+### Aktuelle Version: **v1.1.1** (Apr 2026)
+- 8 Bugfixes (u.a. Multi-Tab Doc/Preview-Mismatch, IBAN-Multi-Erkennung, Per-File-Error-Handling)
+- Kein Startbildschirm mehr — Editor öffnet direkt
+- Auto-Edit-Mode bei manueller Schwärzung
 
-Weitere Details zu den Änderungen finden Sie im [**CHANGELOG.md**](CHANGELOG.md).
+### Vorgänger: **v1.1.0** (Apr 2026)
+- Major Feature-Release: 8 neue Kernfunktionen (Multi-Tab, OCR, Bulk-Aktionen, Export-Vorschau, u.v.m.)
+- 138 automatisierte Tests
+
+### Download-Formate
+- **Setup.exe** (NSIS-Installer, empfohlen): Installation mit Shortcuts
+- **Portable.exe**: Einzelne Datei, keine Installation
+- **Setup.zip**: Manuelles Entpacken
+
+Detaillierte Änderungs-Historie: [**CHANGELOG.md**](CHANGELOG.md).
 
 ---
 
