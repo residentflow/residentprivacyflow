@@ -1,3 +1,5 @@
+> **Archiviert am 30.09.2026.** Die Doku liegt jetzt in `porthor-app/porthor` → `docs/vorgaenger-residentprivacyflow.md`. Das Repo ist schreibgeschützt, nicht gelöscht.
+
 # ResidentPrivacyFlow
 
 ResidentPrivacyFlow ist eine Desktop-Anwendung für Windows, die personenbezogene Daten in PDF-Dokumenten erkennt und schwärzt oder pseudonymisiert. Analyse, Texterkennung (OCR) und Export laufen vollständig lokal auf dem eigenen Gerät. Optional lassen sich die pseudonymisierten Dokumente per Chat oder über vorgefertigte Skills mit einem selbst konfigurierten KI-Anbieter auswerten.
